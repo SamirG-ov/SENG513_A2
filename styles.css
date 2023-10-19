@@ -1,0 +1,50 @@
+.container{
+    position: relative;
+    display: inline-block;
+}
+
+.board {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 544px;
+    height: 544px;
+}
+
+.spot {
+    width: 60px;
+    height: 60px;
+    border: 4px outset #808080;
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+    /* Got the picture from the website https://www.transparenttextures.com to make the game more nostalgic */
+}
+
+.white-spot {
+    background-color: #f0ffff;
+    text-align: center;
+}
+
+.green-spot {
+    background-color: #1aab65;
+    text-align: center;
+}
+
+.black-piece {
+    background-color: #000000;
+    margin: auto;
+    margin-top: 2px;
+    height: 51px;
+    width: 51px;
+    border-radius: 50%;
+    border-style:inset;
+}
+
+.red-piece {
+    background-color: #ff0000;
+    margin: auto;
+    margin-top: 2px;
+    height: 51px;
+    width: 51px;
+    border-radius: 50%;
+    border-style:inset;
+}
