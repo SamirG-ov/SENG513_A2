@@ -1,13 +1,13 @@
 body {
-    background-color: #59a9de;
+    background-color: #53565c;
 }
 
 .gameName {
     display: block;    
     text-align: center;
-    border: 1px dashed black;
+    border: 1px dashed white;
     margin-bottom: 3px;
-    color: black;
+    color: white;
 }
 
 .forAll {
@@ -97,5 +97,4 @@ body {
     /* Got this setting for button from previous project */
 }
 
-.footer {
-}
+/* Will make the mobile version too */
