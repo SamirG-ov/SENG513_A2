@@ -2,12 +2,19 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Checkers Game</title>
+    <title>⚫️🔴Checkers Game🔴⚫️</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="styles.css">
   </head>
 
   <body>
-    <div class="container">
+
+	<div class="gameName">
+		<h1>Checkers Game</h1>
+	</div>
+
+	<div class="forAll">
+		<div class="container">
 			<div class="board">
 				<div id="a1" class="spot white-spot row1"></div>
 				<div id="b1" class="spot green-spot row1"><div class="black-piece"></div></div>
@@ -81,6 +88,17 @@
 				<div id="g8" class="spot green-spot row8"><div class="red-piece"></div></div>
 				<div id="h8" class="spot white-spot row8"></div>
 			</div>
+		</div>
+		<div class="rightSide">
+			<h1>Black's turn</h1>
+			<button onclick="" type="button" class="restartB">Restart</button>
+			<div class="score">
+				<h2>⚫️ Black Pieces: 12</h2>
+				<h2>🔴 Red Pieces:  12</h2>
+			</div>
+			<p class="footer">Made by Samir 👍</p>
+		</div>
+	</div>
+    
   </body>
-
 </html>
