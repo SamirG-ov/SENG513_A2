@@ -48,3 +48,5 @@ function makeKing() {
 function whoWins() {
     
 }
+
+// Add eventListeners for movement
