@@ -1,11 +1,20 @@
 # SENG513_A2
 
+-- title: Checkers Game
+
+
+-- target platform: Desktop and Mobile
+
+
+-- game genre: Board game
+
+
 Describtion:
   
   This is a checkers game with the use of html, css and javascript. Players play on opposite ends of the board. There are 2 different colors each belonging to the different players. And whoever captures all their opponents’ checkers wins.
 
 
-Rules:
+Rules and Objective:
 
   -- Pieces can only move diagonally on dark squares.
   
