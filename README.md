@@ -6,6 +6,7 @@ Describtion:
 
 
 Rules:
+
   -- Pieces can only move diagonally on dark squares.
   
   -- At the start of the game, pieces can only move forward, meaning toward the opposite player’s side.
