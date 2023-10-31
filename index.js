@@ -3,8 +3,14 @@ let scoreB = 0;
 let scoreR = 0;
 
 // Changes the scoreboard
-let piecesB = 12;
-let piecesR = 12;
+let leftB = 12;
+let leftR = 12;
+
+let piecesR = document.querySelectorAll(".red-piece");
+let piecesB = document.querySelectorAll(".black-piece");
+
+// if this is true that means it's red's turn
+let turn = true;
 
 // Positions(IDs) of the pieces on the board
 const board = [
@@ -55,18 +61,62 @@ function makeBoard() {
 }
 makeBoard();
 
+// Find a spot's ID
+function findID(spotID) {
+    let x;
+    let y;  
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if(spotID.id === board[i][j]){
+                x = j;
+                y = i;
+            }
+        }
+    }
+    return [x, y];
+}
 
-
-// To give the functionality of moving to the pieces
-function movePiece() {
-    
+// Change the position of the pieces every turn
+function afterMove(original, selected) {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            if(turn){
+                if(selected.id === board[i][j]){
+                    piecePositions[i][j] = 2
+                }
+            } else {
+                if(selected.id === board[i][j]){
+                    piecePositions[i][j] = 1
+                }
+            }
+            if(original.id === board[i][j]){
+                piecePositions[i][j] = 0;
+            }
+        }
+    }
 }
 
 // If the opponent makes the move we switch the turn to us
 // or viceversa
 function switchTurn() {
-    
+    if(turn === true){
+        whoseTurn.textContent = "Red's turn";
+        for (let i = 0; i < piecesB.length; i++){
+            piecesR[i].setAttribute('draggable', 'true');
+            piecesB[i].setAttribute('draggable', 'false');
+        }
+        turn = false;
+    } else {
+        for(let i = 0; i < piecesR.length; i++){
+            whoseTurn.textContent = "Black's turn";
+            piecesR[i].setAttribute('draggable', 'true');
+            piecesB[i].setAttribute('draggable', 'false');
+        }
+        turn = true;
+    }
 }
+switchTurn();
+
 
 // To check if the spot nearby are moveable
 function moveableSpots() {
