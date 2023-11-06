@@ -41,6 +41,7 @@ let piecePositions = [
 function makePiece(spot, color) {
     let aPiece = document.createElement('div');
     aPiece.setAttribute('class', color+"-piece");
+    aPiece.setAttribute('draggable', 'true');
     let specificSpot = document.getElementById(spot);
     specificSpot.appendChild(aPiece);
 }
@@ -140,3 +141,70 @@ function whoWins() {
 }
 
 // Add eventListeners for movement
+// Got the idea of the event Listeners from https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drag_event
+
+let dp; // dragged piece
+
+/* events fired on the draggable target */
+document.addEventListener("drag", (event) => {
+    console.log("dragging");
+});
+
+document.addEventListener("dragstart", (event) => {
+    // store a reference on the dp element
+    dp = event.target;
+    // make it half transparent
+    event.target.classList.add("dragging");
+});
+
+document.addEventListener("dragend", (event) => {
+    // reset the transparency
+    event.target.classList.remove("dragging");
+});
+
+/* events fired on the drop targets */
+document.addEventListener("dragover", (event) => {
+    // prevent default to allow drop
+    event.preventDefault();
+    },
+    false
+);
+
+// highlight potential drop target when the draggable element enters it
+document.addEventListener("dragenter", (event) => {
+    let original = dp.parentNode;
+    let selected = event.target;
+
+    if(selected.classList.contains("green-spot") && selected.innerHTML === ""){
+        if(moveRestriction(selected, original)){
+            selected.style.backgroundColor = "grey";
+        }
+    }
+});
+
+document.addEventListener("dragleave", (event) => {
+    // reset background of potential drop target when the draggable element leaves it
+    if (event.target.classList.contains("green-spot")) {
+        event.target.style.backgroundColor = "";
+      }
+});
+
+document.addEventListener("drop", (event) => {
+    // prevent default action (open as link for some elements)
+    event.preventDefault();
+    // move dp element to the selected drop target
+    let original = dp.parentNode;
+    let selected = event.target;
+
+    if(selected.classList.contains("green-spot") && selected.innerHTML === ""){
+        if(moveRestriction(selected, original)){
+            selected.style.backgroundColor = "";
+            afterMove(original, selected);
+            original.removeChild(dp);
+            selected.append(dp);
+            whoWins();
+            makeKing();
+            switchTurn();
+        }
+    }
+});
