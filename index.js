@@ -118,26 +118,94 @@ function switchTurn() {
 }
 switchTurn();
 
+function a(start, end) {
+    let midCoords = [((start[0] + end[0])/2), ((start[1] + end[1])/2)];
+    let midID = board[midCoords[1]][midCoords[0]]
+    return midID;
+}
 
 // To check if the spot nearby are moveable
-function moveableSpots() {
-    
+function moveableSpots(original, selected) {
+    let startCoords = findID(original);
+    let endCoords = findID(selected);
+
+    let mid = document.getElementById(a(startCoords, endCoords));
+
+    if (dp.classList.contains('king')) {
+        let isAdjacent = Math.abs(startCoords[1] - endCoords[1]) === 1 && Math.abs(startCoords[0] - endCoords[0]) === 1;
+        let isCapture = Math.abs(startCoords[1] - endCoords[1]) === 2 && Math.abs(startCoords[0] - endCoords[0]) === 2;
+
+        if (isAdjacent || (isCapture && mid.children[0] &&
+            ((mid.children[0].classList.contains('red-piece') && dp.classList.contains('black-piece')) ||
+            (mid.children[0].classList.contains('black-piece') && dp.classList.contains('red-piece'))))) {
+            return true;
+        }
+    } else {
+        let direction = (dp.classList.contains('black-piece')) ? 1 : -1;
+
+        let isAdjacent = startCoords[1] === endCoords[1] + direction &&
+            (endCoords[0] === startCoords[0] + 1 || endCoords[0] === startCoords[0] - 1);
+        let isCapture = startCoords[1] === endCoords[1] + 2 * direction &&
+            (startCoords[0] === endCoords[0] - 2 || startCoords[0] === endCoords[0] + 2) &&
+            mid.children[0] && mid.children[0].classList.contains((dp.classList.contains('red-piece')) ? 'black-piece' : 'red-piece');
+
+        if (isAdjacent || (isCapture)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // To restrict the moves of the pieces to the allowable spots
-function moveRestriction() {
+function moveRestriction(original, selected) {
+    let startCoords = findID(original);
+    let endCoords = findID(selected);
+
+    if (moveableSpots(original, selected)) {
     
+        let mid = document.getElementById(a(startCoords, endCoords));
+
+        if (dp.classList.contains('king') && Math.abs(startCoords[1] - endCoords[1]) === 2 && Math.abs(startCoords[0] - endCoords[0]) === 2) {
+            mid.innerHTML = "";
+            if (dp.classList.contains('red-piece')) {
+                scoreR += 1;
+            } else {
+                scoreB += 1;
+            }
+            return true;
+        } else if (Math.abs(startCoords[1] - endCoords[1]) === 1 && Math.abs(startCoords[0] - endCoords[0]) === 1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // If one piece reaces to the opponent's first row
 // then they become a king which can move in any direction
 function makeKing() {
-    
+     // Check if the moved piece has the class "red-piece" and is in the 8th row and is not already a king
+     if(dp.classList.contains("red-piece") && chosenSquare.classList.contains("row8") && !dp.classList.contains("king")){
+        dp.classList.add("king"); 
+    } 
+    // Check if the moved piece has the class "black-piece" and is in the 1st row and is not already a king
+    else if (dp.classList.contains("black-piece") && chosenSquare.classList.contains("row1") && !dp.classList.contains("king")){
+        dp.classList.add("king"); 
+    }
 }
 
 // To check the condition to win
-function whoWins() {
+function updateWinStatus(winner) {
     
+}
+
+function whoWins() {
+    if (scoreR === 12) {
+        updateWinStatus("Red");
+    } else if (scoreB === 12) {
+        updateWinStatus("Black");
+    }
 }
 
 // Add eventListeners for movement

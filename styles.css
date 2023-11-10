@@ -82,6 +82,10 @@ body {
     color: white;
 }
 
+.king {
+    border-color: purple;
+}
+
 .restartB {
     margin-top: 5%;
     background-color: #008CBA;
