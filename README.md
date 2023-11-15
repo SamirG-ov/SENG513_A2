@@ -34,6 +34,7 @@ Rules and Objective:
 
 # Reference:
   -- Got the rules from: https://www.usatoday.com/story/graphics/2023/01/23/how-to-play-checkers-rules-strategy/10795787002/
+  -- Used chatGPT to rewrite the documentation that I had
 
 
 # Made by Samir

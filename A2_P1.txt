@@ -1,5 +1,6 @@
 name: Samir Gulahmadov
 id: 30078572
 username for GitHub: SamirG-ov
+link to my profile: https://github.com/SamirG-ov
 name of the repository: SENG513_A2
 link to the repository: https://github.com/SamirG-ov/SENG513_A2
