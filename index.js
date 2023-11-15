@@ -1,31 +1,30 @@
-// Tracks the score of the pieces for the win
-let scoreB = 0;
+// Score for red pieces and black pieces.
 let scoreR = 0;
+let scoreB = 0;
 
-// Changes the scoreboard
-let leftB = 12;
-let leftR = 12;
-
-let piecesR = document.querySelectorAll(".red-piece");
-let piecesB = document.querySelectorAll(".black-piece");
-
-// if this is true that means it's red's turn
+// Represents the current turn, true for red, false for black
 let turn = true;
 
-// Positions(IDs) of the pieces on the board
-const board = [
-    ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'],
-    ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
-    ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3'],
-    ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
-    ['a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5'],
-    ['a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6'],
+let whoseTurn = document.querySelector('#whoseTurn');  // Display element for current player's turn
+let scoreBTracker = document.querySelector('#scoreBTracker'); // Display element for black player's score
+let scoreRTracker = document.querySelector('#scoreRTracker'); // Display element for red player's score
+let win = document.querySelector('#win') // Display element for game win message
+scoreBTracker.textContent = "Black's score: " + String(scoreB); // Initial display of black player's score
+scoreRTracker.textContent = "Red's score: " + String(scoreR); // Initial display of red player's score
+
+// 2D array representing the game board with spot positions
+let board = [
+    ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8'],
     ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
-    ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
+    ['a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6'],
+    ['a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5'],
+    ['a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4'],
+    ['a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3'],
+    ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
+    ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
 ];
 
-// This is the trackable positions of the pieces on the board
-// 1 means red pieces, 2 means black pieces
+// 2D array to track positions of pieces
 let piecePositions = [
     [0, 2, 0, 2, 0, 2, 0, 2],
     [2, 0, 2, 0, 2, 0, 2, 0],
@@ -37,8 +36,8 @@ let piecePositions = [
     [1, 0, 1, 0, 1, 0, 1, 0]
 ];
 
-// To create the pieces that we need, either red or black
-function makePiece(spot, color) {
+// Create and append a game piece of the specified color to a given spot
+function makePiece(spot, color){
     let aPiece = document.createElement('div');
     aPiece.setAttribute('class', color+"-piece");
     aPiece.setAttribute('draggable', 'true');
@@ -46,48 +45,47 @@ function makePiece(spot, color) {
     specificSpot.appendChild(aPiece);
 }
 
-// To create a board at the beginning of the game
-// or restart the game
-function makeBoard() {
-    for (let i = 7; i >= 0; i--) {
-        for (let j = 7; j >= 0; j--) {
-            let spot = board[i][j];
-            if(piecePositions[i][j] === 1){
-                makePiece(spot, 'red');
+// Set up the initial game board with pieces in their starting positions
+function makeBoard(){
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            let position = board[i][j];
+            if(0 < piecePositions[i][j] && piecePositions[i][j] === 1){
+                makePiece(position, 'red');
             } else if(piecePositions[i][j] === 2){
-                makePiece(spot, 'black');
-            } else {}
+                makePiece(position, 'black');
+            }
         }
     }
 }
-makeBoard();
+makeBoard(); // Initialize the game board
 
-// Find a spot's ID
-function findID(spotID) {
+// Find the coordinates (x, y) of a given spot on the game board
+function findId(selected){
     let x;
-    let y;  
+    let y;
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            if(spotID.id === board[i][j]){
+            if(selected.id === board[i][j]){
                 x = j;
                 y = i;
             }
         }
     }
-    return [x, y];
+    return [x, y]
 }
 
-// Change the position of the pieces every turn
-function afterMove(original, selected) {
+// Update the piecePositions array based on the move made
+function afterMove(selected, original){
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
             if(turn){
                 if(selected.id === board[i][j]){
-                    piecePositions[i][j] = 2
+                    piecePositions[i][j] = 1
                 }
             } else {
                 if(selected.id === board[i][j]){
-                    piecePositions[i][j] = 1
+                    piecePositions[i][j] = 2
                 }
             }
             if(original.id === board[i][j]){
@@ -97,182 +95,287 @@ function afterMove(original, selected) {
     }
 }
 
-// If the opponent makes the move we switch the turn to us
-// or viceversa
-function switchTurn() {
+
+let redPieces = document.querySelectorAll(".red-piece"); // Collection of all red game pieces
+let blackPieces = document.querySelectorAll(".black-piece"); // Collection of all black game pieces
+
+// Switch the turn between red and black players, update the display accordingly
+function switchTurn(){
     if(turn === true){
         whoseTurn.textContent = "Red's turn";
-        for (let i = 0; i < piecesB.length; i++){
-            piecesR[i].setAttribute('draggable', 'true');
-            piecesB[i].setAttribute('draggable', 'false');
+        for (let i = 0; i < blackPieces.length; i++){
+            redPieces[i].setAttribute('draggable', 'true');
+            blackPieces[i].setAttribute('draggable', 'false');
         }
         turn = false;
     } else {
-        for(let i = 0; i < piecesR.length; i++){
+        for(let i = 0; i < redPieces.length; i++){
             whoseTurn.textContent = "Black's turn";
-            piecesR[i].setAttribute('draggable', 'true');
-            piecesB[i].setAttribute('draggable', 'false');
+            blackPieces[i].setAttribute('draggable', 'true');
+            redPieces[i].setAttribute('draggable', 'false');
         }
         turn = true;
     }
 }
-switchTurn();
+switchTurn(); // Set the initial turn
 
-function a(start, end) {
-    let midCoords = [((start[0] + end[0])/2), ((start[1] + end[1])/2)];
-    let midID = board[midCoords[1]][midCoords[0]]
-    return midID;
+// Calculate the ID of the middle spot between two given coordinates
+function a(start, end){
+    let midSC = [((start[0] + end[0])/2), ((start[1] + end[1])/2)]
+    let midSId = board[midSC[1]][midSC[0]];
+    return midSId;
 }
 
-// To check if the spot nearby are moveable
-function moveableSpots(original, selected) {
-    let startCoords = findID(original);
-    let endCoords = findID(selected);
+// Check if there is a piece of the opposing color between two given coordinates
+function b(start, end){
+    let midS = document.getElementById(a(start, end))
+    if(midS.children[0]){
+        if((midS.children[0].classList.contains('black-piece')) && (dp.classList.contains('red-piece'))){
+            return true;
+        } else if(midS.children[0].classList.contains('red-piece') && dp.classList.contains('black-piece')){
+            return true;
+        }
+    }
+}
 
-    let mid = document.getElementById(a(startCoords, endCoords));
+// Move a game piece to a new spot on the game board
+function c(selected, original){
+    selected.style.backgroundColor = "";
+    afterMove(selected, original);
+    original.removeChild(dp);
+    selected.append(dp);
+}
+
+// Check if a move is allowed based on piece limitations and turn valid spots yellow when hovered over
+function moveableSpots(selected, original) {
+    let start = findId(original);
+    let end = findId(selected);
 
     if (dp.classList.contains('king')) {
-        let isAdjacent = Math.abs(startCoords[1] - endCoords[1]) === 1 && Math.abs(startCoords[0] - endCoords[0]) === 1;
-        let isCapture = Math.abs(startCoords[1] - endCoords[1]) === 2 && Math.abs(startCoords[0] - endCoords[0]) === 2;
+        return validateKingMove(start, end);
+    } else if (dp.classList.contains('black-piece')) {
+        return validateBlackMove(start, end);
+    } else if (dp.classList.contains('red-piece')) {
+        return validateRedMove(start, end);
+    }
+}
 
-        if (isAdjacent || (isCapture && mid.children[0] &&
-            ((mid.children[0].classList.contains('red-piece') && dp.classList.contains('black-piece')) ||
-            (mid.children[0].classList.contains('black-piece') && dp.classList.contains('red-piece'))))) {
-            return true;
+ // Validate the move for a king piece
+function validateKingMove(start, end) {
+    if (
+        (start[1] === end[1] - 1 || start[1] === end[1] + 1) &&
+        (start[0] === end[0] - 1 || start[0] === end[0] + 1)
+    ) {
+        return true;
+    } else if (
+        (start[1] === end[1] - 2 || start[1] === end[1] + 2) &&
+        (start[0] === end[0] - 2 || start[0] === end[0] + 2) &&
+        b(start, end)
+    ) {
+        return true;
+    }
+}
+
+// Validate the move for a red piece
+function validateRedMove(start, end) {
+    if (
+        start[1] === end[1] + 1 &&
+        (end[0] === start[0] + 1 || end[0] === start[0] - 1)
+    ) {
+        return true;
+    } else if (
+        start[1] === end[1] + 2 &&
+        (start[0] === end[0] - 2 || start[0] === end[0] + 2) &&
+        b(start, end)
+    ) {
+        return true;
+    }
+}
+
+// Validate the move for a black piece
+function validateBlackMove(start, end) {
+    if (
+        start[1] === end[1] - 1 &&
+        (end[0] === start[0] + 1 || end[0] === start[0] - 1)
+    ) {
+        return true;
+    } else if (
+        start[1] === end[1] - 2 &&
+        (start[0] === end[0] - 2 || start[0] === end[0] + 2) &&
+        b(start, end)
+    ) {
+        return true;
+    }
+}
+
+
+// Check if a move is within the restrictions for a specific piece
+function moveRestriction(selected, original) {
+    let start = findId(original);
+    let end = findId(selected);
+
+    if (dp.classList.contains('king')) {
+        if(dp.classList.contains("red-piece")) {
+          return processKingMove(start, end, "red-piece");
+        } else {
+          return processKingMove(start, end, "black-piece");
         }
+    } else if (dp.classList.contains('red-piece')) {
+        return processNonKingMove(start, end, 'red-piece', scoreR, scoreRTracker);
     } else {
-        let direction = (dp.classList.contains('black-piece')) ? 1 : -1;
-
-        let isAdjacent = startCoords[1] === endCoords[1] + direction &&
-            (endCoords[0] === startCoords[0] + 1 || endCoords[0] === startCoords[0] - 1);
-        let isCapture = startCoords[1] === endCoords[1] + 2 * direction &&
-            (startCoords[0] === endCoords[0] - 2 || startCoords[0] === endCoords[0] + 2) &&
-            mid.children[0] && mid.children[0].classList.contains((dp.classList.contains('red-piece')) ? 'black-piece' : 'red-piece');
-
-        if (isAdjacent || (isCapture)) {
-            return true;
-        }
+        return processNonKingMove(start, end, 'black-piece', scoreB, scoreBTracker);
     }
+}
 
+// Process a move for a king piece, including capturing opponent pieces
+function processKingMove(start, end, pieceColor) {
+    if (
+        (start[1] === end[1] - 1 || start[1] === end[1] + 1) &&
+        (start[0] === end[0] - 1 || start[0] === end[0] + 1)
+    ) {
+        return true;
+    } else if (
+        (start[1] === end[1] - 2 || start[1] === end[1] + 2) &&
+        (start[0] === end[0] - 2 || start[0] === end[0] + 2) &&
+        b(start, end)
+    ) {
+      if(pieceColor === "red-piece") {
+        scoreR=scoreR+1;
+        scoreRTracker.textContent = `Red's Score: ${scoreR}`;
+      } else if (pieceColor === "black-piece"){
+        scoreB=scoreB+1;
+        scoreBTracker.textContent = `Black's Score: ${scoreB}`;
+
+      }
+        processCapture(start, end);
+
+        return true;
+    }
     return false;
 }
 
-// To restrict the moves of the pieces to the allowable spots
-function moveRestriction(original, selected) {
-    let startCoords = findID(original);
-    let endCoords = findID(selected);
+// Process a move for a non-king piece, including capturing opponent pieces
+function processNonKingMove(start, end, pieceColor, score, scoreTracker) {
+  let direction = pieceColor === 'red-piece' ? 1 : -1;
 
-    if (moveableSpots(original, selected)) {
-    
-        let mid = document.getElementById(a(startCoords, endCoords));
-
-        if (dp.classList.contains('king') && Math.abs(startCoords[1] - endCoords[1]) === 2 && Math.abs(startCoords[0] - endCoords[0]) === 2) {
-            mid.innerHTML = "";
-            if (dp.classList.contains('red-piece')) {
-                scoreR += 1;
-            } else {
-                scoreB += 1;
-            }
-            return true;
-        } else if (Math.abs(startCoords[1] - endCoords[1]) === 1 && Math.abs(startCoords[0] - endCoords[0]) === 1) {
-            return true;
+    if (
+        start[1] === end[1] + direction &&
+        (end[0] === start[0] + 1 || end[0] === start[0] - 1)
+    ) {
+        return true;
+    } else if (
+        start[1] === end[1] + 2 * direction &&
+        (start[0] === end[0] - 2 || start[0] === end[0] + 2) &&
+        b(start, end)
+    ) {
+        if(pieceColor === "red-piece") {
+          scoreR=scoreR+1;
+        } else if (pieceColor === "black-piece"){
+          scoreB=scoreB+1;
         }
+        processCapture(start, end);
+        if(pieceColor === "red-piece") {
+          scoreRTracker.textContent = `Red's Score: ${scoreR}`;
+        } else if (pieceColor === "black-piece"){
+          scoreBTracker.textContent = `Black's Score: ${scoreB}`;
+        }
+        return true;
     }
-
     return false;
 }
 
-// If one piece reaces to the opponent's first row
-// then they become a king which can move in any direction
-function makeKing() {
-     // Check if the moved piece has the class "red-piece" and is in the 8th row and is not already a king
-     if(dp.classList.contains("red-piece") && chosenSquare.classList.contains("row8") && !dp.classList.contains("king")){
-        dp.classList.add("king"); 
-    } 
-    // Check if the moved piece has the class "black-piece" and is in the 1st row and is not already a king
-    else if (dp.classList.contains("black-piece") && chosenSquare.classList.contains("row1") && !dp.classList.contains("king")){
-        dp.classList.add("king"); 
+// Remove a captured piece from the game board
+function processCapture(start, end) {
+    let middleSquare = document.getElementById(a(start, end));
+    if (middleSquare) {
+        middleSquare.innerHTML = "";
     }
 }
 
-// To check the condition to win
-function updateWinStatus(winner) {
-    
-}
 
-function whoWins() {
-    if (scoreR === 12) {
-        updateWinStatus("Red");
-    } else if (scoreB === 12) {
-        updateWinStatus("Black");
+// Add 'king' class to a game piece if it reaches the opposite row
+function makeKing(selected){
+    if(dp.classList.contains("black-piece") && selected.classList.contains("row1") && !dp.classList.contains("king")){
+        dp.classList.add("king")
+    } else if (dp.classList.contains("red-piece") && selected.classList.contains("row8") && !dp.classList.contains("king")){
+        dp.classList.add("king")
     }
 }
 
-// Add eventListeners for movement
-// Got the idea of the event Listeners from https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drag_event
+// Check if either player has won by reaching a score of 12, display the winner
+function whoWins(){
+    if(scoreR === 12){
+        win.textContent = "Red wins!"
+        whoseTurn.textContent = ""
+    } else if(scoreB === 12){
+        win.textContent = "Black wins!"
+        whoseTurn.textContent = ""
+    }
+}
 
-let dp; // dragged piece
+// Reload the game to restart
+function restart(){
+    window.location.reload();
+}
 
-/* events fired on the draggable target */
+let dp; // Represents the dragged piece
+
+// Set background color to grey while dragging
 document.addEventListener("drag", (event) => {
-    console.log("dragging");
-});
+    event.target.style.backgroundColor = "grey";
+}, false);
 
+// Set the dragged piece and adjust its appearance during drag start
 document.addEventListener("dragstart", (event) => {
-    // store a reference on the dp element
     dp = event.target;
-    // make it half transparent
-    event.target.classList.add("dragging");
-});
+    event.target.style.opacity = "0.2";
 
+}, false);
+
+// Reset the dragged piece's appearance after drag ends
 document.addEventListener("dragend", (event) => {
-    // reset the transparency
-    event.target.classList.remove("dragging");
-});
+    event.target.style.opacity = "1";
+    event.target.style.backgroundColor = '';
+}, false);
 
-/* events fired on the drop targets */
+// Allow dropping on dragover
 document.addEventListener("dragover", (event) => {
-    // prevent default to allow drop
     event.preventDefault();
-    },
-    false
-);
+}, false);
 
-// highlight potential drop target when the draggable element enters it
+// Check if the drop target is a green spot and is empty, change color accordingly
 document.addEventListener("dragenter", (event) => {
     let original = dp.parentNode;
     let selected = event.target;
 
+    // Highlight the valid drop target
     if(selected.classList.contains("green-spot") && selected.innerHTML === ""){
-        if(moveRestriction(selected, original)){
-            selected.style.backgroundColor = "grey";
+        if(moveableSpots(selected, original)){
+            selected.style.backgroundColor = "yellow";
         }
     }
-});
+}, false);
 
+// Reset the background color when leaving a green spot
 document.addEventListener("dragleave", (event) => {
-    // reset background of potential drop target when the draggable element leaves it
-    if (event.target.classList.contains("green-spot")) {
-        event.target.style.backgroundColor = "";
-      }
-});
+    if(event.target.classList.contains("green-spot")){
+            event.target.style.backgroundColor = "";
+    }
+}, false);
 
+// When dropped move the piece, check for king promotion, switch turn, and check for a winner
 document.addEventListener("drop", (event) => {
-    // prevent default action (open as link for some elements)
     event.preventDefault();
-    // move dp element to the selected drop target
     let original = dp.parentNode;
     let selected = event.target;
 
     if(selected.classList.contains("green-spot") && selected.innerHTML === ""){
+      // Check if the drop is on a valid spot and meets move restrictions
         if(moveRestriction(selected, original)){
-            selected.style.backgroundColor = "";
-            afterMove(original, selected);
-            original.removeChild(dp);
-            selected.append(dp);
-            whoWins();
-            makeKing();
+            c(selected, original);
+            makeKing(selected);
             switchTurn();
+            whoWins();
         }
     }
-});
+}, false);
